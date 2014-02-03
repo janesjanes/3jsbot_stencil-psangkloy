@@ -78,6 +78,9 @@ function my_init() {
 
     // CS148: INITIAL GETTING FAMILIAR CODE  (START HERE)
 
+	jit = true;
+	y=2;
+	
     var local_spacing = 0.9;  // variables declared with "var" are local 
     global_spacing = 0.9;  // variables declared with "var" are global
 
@@ -107,7 +110,7 @@ function my_init() {
     textbar.style.height = 20;
     textbar.style.backgroundColor = "black";
     textbar.style.color = "#00ff00";
-    textbar.innerHTML = "Welcome to 3jsbot. I want to see some text. Too much coffee?";
+    textbar.innerHTML = "Up : w, Down : s, Jittering : q, Stop Jittering : e";
     textbar.style.top = 10 + 'px';
     textbar.style.left = 10 + 'px';
     document.body.appendChild(textbar);
@@ -182,12 +185,23 @@ function my_animate() {
     // CS148: INITIAL GETTING FAMILIAR CODE  (START HERE)
 
     // keyboard is threejs helper for reading keyboard state
-    if (keyboard.pressed("x")) 
-        textbar.innerHTML = "moving up";  // make the pieces move up
-    else if (keyboard.pressed("z")) 
-        textbar.innerHTML = "zzzzzz";  // stop jittering the pieces
+    if (keyboard.pressed("w")) {
+		y = y+1;
+        textbar.innerHTML = "Moving Up"; } // make the pieces move up}
+    else if (keyboard.pressed("s")) {
+		y = y-1;
+		textbar.innerHTML = "Moving Down";}
+	else if (keyboard.pressed("q")) {
+	jit = true;
+		textbar.innerHTML = "Jittering : " + jit;
+		  }// stop jittering the pieces}
+		  else if (keyboard.pressed("e")) {
+	jit = false;
+		textbar.innerHTML = "Jittering : " + jit;
+		  }
     else {
-        // make the pieces jitter, and say something interesting
+        
+    textbar.innerHTML = "Up : w, Down : s, Jittering : q, Stop Jittering : e";
     }
 
     // jsmat will be used to transform a 3D object to a specific location in the world
@@ -211,10 +225,10 @@ function my_animate() {
     for (x in robot.joints) {
 
         // jsmat[1][3] corresponds to the y-coordinate of the position for the 3D object
-        jsmat[1][3] = 2+Math.random()*0.02;  // Math object has lots of helpful functions
+        jsmat[1][3] = y*0.02+jit*Math.random()*0.02;  // Math object has lots of helpful functions
 
         // jsmat[2][3] corresponds to the z-coordinate of the position for the 3D object
-        jsmat[2][3] = Math.random()*0.02;
+        jsmat[2][3] = jit*Math.random()*0.02;
 
         // convert 2D JavaScript array to the threejs format
         threemat = matrix_2Darray_to_threejs(jsmat); 
@@ -228,8 +242,8 @@ function my_animate() {
     // iterate over each link of the robot independently
     jsmat[0][3] = -Object.keys(robot.joints).length*spacing/2;
     for (x in robot.links) {
-        jsmat[1][3] = 1+Math.random()*0.02;
-        jsmat[2][3] = Math.random()*0.02;
+        jsmat[1][3] = y*0.02+jit*Math.random()*0.02;
+        jsmat[2][3] = jit*Math.random()*0.02;
         threemat = matrix_2Darray_to_threejs(jsmat);
         simpleApplyMatrix(robot.links[x].geom,threemat);
         jsmat[0][3] += spacing;
